@@ -2,6 +2,10 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-@app.get("/") # line 48 in fastapi/applications.py
+@app.get("/")
 async def root():
     return {"message": "Hello World"}
+
+@app.get("/redirect")
+async def redirect():
+    return {"message": "Redirected"}
