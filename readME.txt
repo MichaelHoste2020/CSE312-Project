@@ -1,39 +1,75 @@
-Coding Standards:
-(Below will be the general rules on how we all would like code and other information to be structured like comments function names and class names)
+**DOC:** `https://fastapi.tiangolo.com/tutorial/first-steps/`
 
-#####Functions#####
-- Function names should be simple and effective naming wise meaning the a function that is being created should be kept in this order("funtionality"_"Comment"_"UBIT")
-Which should allow for all of us to understand what the function is doing along with some wiggle room along with who to ask if something is wrong with that function. For example a simple sorting of users names function should be labeled "Sort_Users_mthoste():".
-- Functions should be made only when something is considered to long for the main function and should be broken appart or has multi-use functionality.
-(add more if wanted :))
+**REPO:** `https://github.com/tiangolo/fastapi`
 
-#####Classes#####
-- Classes should be made only when more than 3 to 4 variables are being used for the same process and should have a name consisting of the following "functionality_OptionalComment_UBIT"
-(add more if wanted :))
+* License: MIT License
 
-#####Comments#####
-- Please keep comments clean and consise for when something is not straight forward or for more information on functions and class declarations and if using a comment for functionality decription on how something works please include ubit at the end.
-(add more if wanted :))
+  * Description:
 
-#####Variables#####
-- Naming a variable something meaningful and nothing lengthy is optional but if you do split a word or feel a word is too long please do the following: "funtionality"_"Comment" since the spacing will allow for easy readiblity and clean working tree.
-(add more if wanted :))
+    * Anyone can obtain a free copy of FastAPI so long as it deals with software use. They can use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software
 
-#####Branching#####
-- Since we are all working on git and in the same repo keeping a easy working tree is optimal and something we all must consider. When implementing a new function or method, creating a new branch with a ID number I think is something I think would be best since all of use merging and working on main can have issues. The naming convention for branching should be "1_Functionality" and all merging should be done locally to main and issues resolved should be done so locally or done in git. Please avoid breaking main but it will happen.
-(add more if wanted :))
-----------------------------------------------
-This will be the meeting notes REPORT templete.
+  * Restrictions:
 
-###############################################
+    * No warranty and/or liability. Copyright owners are not held responsible for any claim, damages, or other liabilities that may arise.
 
-3-3-23
-Not Present: Erick
 
-Main idea for this meeting is to decide what framework we would like to work with.
-- Frame work fastAPI/ python since this would allow for us to work in a well structured enviorment that is optomized.
-- Some tasks for people to work on before next meeting are: create a main file and start creating the basic framework for this
-Assignment and structure of the code, locate a server hosting service (github student access) and try and get it connected
-before next meeting.
-- If we are using Zenhub soneone try and get our objectives written down so we can start using that to manage tasks.
-- The breaking up of tasks will be layed out in discord.
+**\* Install**
+
+  ```
+  pip install fastapi
+  pip install "uvicorn[standard]"
+  ```
+
+  * `uvicorn`
+
+    * A ASGI web server implementation
+
+    * Acts as our server to host code
+
+    * Allows for async frameworks for python
+
+**\* Hello world**
+
+  ```py
+  from fastapi import FastAPI
+  
+  app = FastAPI()
+  
+  @app.get("/")
+  async def root():
+      return {"message": "Hello World"}
+  ```
+
+  * `FastAPI()`
+
+    * Location
+
+      * master/fastapi/application.py
+
+      * Line: 48
+
+    * Class call that provides us access to all functions within FastAPI
+
+  * `@app.get(“/”)`
+
+    * Location
+
+      * master/fastapi/application.py
+
+      * Line: 438
+
+    * `.get()` has multiple arguments, but the required one is the path, in the example its path `/`
+
+    * When `.get()` is invoked, it takes the arguments and passes them into another `.get()`function located in master/fastapi/router.py on line 833. This new `.get()`function passes these arguments to the `api_route` function located in the same file on line 629. `api_route` then adds the new route by passing the arguments to the function `add_api_route` on line 547. This function is what builds the routing and appends it to a list of routes called `routes`. When the server starts it will check for whenever a route is called and reference the defined function declared below each respected `.get()`. In this example, when a client requests `/`, the function `root()` will be called.
+
+**\* Running The Server**
+
+  ```py
+  uvicorn server:app --reload
+  ```
+
+  * `server` refers to the file name, in our example the python file is called `server.py`
+
+  * `app` refers to the variable set to `FastAPI()` in our example it’ll be `app = FastAPI()`
+
+  * `--reload` does a server restart for code change, only use for development
