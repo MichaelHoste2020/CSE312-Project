@@ -25,6 +25,12 @@ h1 {
     color: white;
     font-size:15px;
 }
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: white;
+    font-size: 60px;
+}
 .textBoxdiv {
     border-bottom: 2xp solid white;
     position: relative;
@@ -60,4 +66,10 @@ h1 {
 }
 .signUp a {
     color: black;
+}
+.center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
