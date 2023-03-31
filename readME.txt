@@ -12,3 +12,11 @@ Assignment and structure of the code, locate a server hosting service (github st
 before next meeting.
 - If we are using Zenhub soneone try and get our objectives written down so we can start using that to manage tasks.
 - The breaking up of tasks will be layed out in discord.
+
+3-10-23
+
+3-17-23
+
+3-24-23 (Spring Break)
+
+3-31-23
