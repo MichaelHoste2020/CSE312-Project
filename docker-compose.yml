@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  mongo:
+      image: mongo:4.2.5
+      ports:
+          - '27017:27017'
+  web:
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0
+    volumes:
+      - .:/root
+    ports:
+      - 8008:8000
