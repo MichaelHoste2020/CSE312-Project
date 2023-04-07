@@ -1,0 +1,48 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8" />
+    <title>Phaser Grid Test</title>
+    <script src="phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+    var config = {
+        type: Phaser.AUTO,
+        width: 800,
+        height: 800,
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
+
+    var game = new Phaser.Game(config);
+
+    function preload ()
+    {
+    }
+
+    function create ()
+    {
+        var num_boxes = 15;
+        var game_grid = this.add.grid(config.width/2, config.height/2, config.width, config.height, config.width/num_boxes, config.height/num_boxes, 0xffffff);
+
+    }
+
+    function update ()
+    {
+    }
+
+</script>
+
+</body>
+</html>
