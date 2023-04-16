@@ -1,14 +1,12 @@
-version: '3.8'
-
+version: '3.3' 
 services:
-  mongo:
-      image: mongo:4.2.5
-      ports:
-          - '27017:27017'
-  web:
-    build: .
-    command: uvicorn app.main:app --host 0.0.0.0
-    volumes:
-      - .:/root
-    ports:
-      - 8008:8000
+    mongo:
+        image: mongo:4.2.5
+        ports:
+            - '27017:27017'
+    app:
+        build: .
+        environment:
+            WAIT_HOSTS: mongo:27017
+        ports:
+            - '8000:8000'
