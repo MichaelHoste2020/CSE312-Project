@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Login</title>
+        <link rel="stylesheet" href="../styles/main.css">
+        <script src="../js/main.js"></script>
+    </head>
+    <body>
+        <div class="landingContainer">
+            <img id="logo" src="../images/logo.svg">
+            <form action="/data" id="loginPrompt" method="post" onsubmit="clearData()" enctype="application/json">
+                <input placeholder="Enter your name" id="username" type="text" name="username" required>
+                <br>
+                <input placeholder="Password" id="password" type="password" name="password" required>
+                <div id="submitButtons">
+                    <input type="submit" id="loginButton" value="Login">
+                    <input type="submit" id="signupButton" value="Sign up">
+                </div>
+            </form>
+
+            <div class="infoBox">
+                <div class="infoText">
+                    <div id="intro">
+                        <h4>Welcome to Goose Run</h4>
+                        <br>
+                        <p>You have 1 minute and 20 seconds to capture as many squares as you can. The player with the most tiles at the end of the round wins the lobby. </p>
+                    </div>
+                    <div id="movementInfo">
+                        <h5>Movement</h5>
+                        <ul>
+                            <li>W: Up</li>
+                            <li>A: Left</li>
+                            <li>S: Down</li>
+                            <li>D: Right</li>
+                        </ul>
+                    </div>
+                    <div id="captureInfo">
+                    <h5>Capturing</h5>
+                        <ul>
+                            <li>Create a closed square to claim an area</li>
+                        </ul>
+                    </div>
+                    <div id="territoryInfo">
+                        <h5>Stealing Territory</h5>
+                        <ul>
+                            <li>If you walk over an incomplete path of another player, you steal their territory! They also die an agonizing death, its code silent and motionless, with the final bytes of its png file erased.</li>
+                        </ul>
+                    </div>
+                </div>  
+            </div>
+        </div>
+    </body>
+</html>
