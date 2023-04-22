@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 import socketserver
+import python_http_parser
 from Network import *
 
 
@@ -20,13 +21,13 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
 
         recieved_data = self.request.recv(2048)
+        print("\n")
+        print(recieved_data)
+        print("\n")
+        recieved_data = python_http_parser.parse(recieved_data)
 
         # Incoming packet
         print(recieved_data)
-
-        if recieved_data.find(b"websocket", 0, 20) != 0:
-
-            self.Socket_Collection.append("id": self.client_address, "socket": self)
 
         # This in case we have no more information
         if len(recieved_data) == 0:
@@ -37,9 +38,9 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
 # This is will be used for some local behavior but the below will have to change for production
 if __name__ == "__main__":
-    host = "0.0.0.0"  # This will have to change for production
-    port = 8000
+    host = "0.0.0.0"
+    port = 8001
 
-    # Threading will allow for more people in the server
+    # We are now threading here which allows for us to work with more users
     server = socketserver.ThreadingTCPServer((host, port), MyTCPHandler)
     server.serve_forever()

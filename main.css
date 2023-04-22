@@ -1,63 +1,50 @@
-*{
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    margin: 0;
-    padding: 0;
-    text-decoration: none;
-    box-sizing: border-box;
-}
 body {
-    min-height: 100vh;
-    background: grey;
+    background-color: #222;
+    color: #fff;
+    font-family: Arial, sans-serif;
 }
-form {
-    background: grey;
-    width: 350px;
-    height: 580px;
-    padding: 75px 50px;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-}
+
 h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: white;
-    font-size:15px;
+    font-size: 36px;
+    color: #fff;
 }
-.textBoxdiv {
-    border-bottom: 2xp solid white;
-    position: relative;
-    margin: 35px 0;
+
+h3 {
+    font-size: 18px;
+    color: #fff;
 }
-.textBoxdiv input {
-    background: none;
+
+label {
+    font-size: 18px;
+    color: #fff;
+}
+
+input[type="text"],
+input[type="password"] {
+    background-color: #444;
+    color: #fff;
     border: none;
-    outline: none;
-    width: 100%;
-    color: white;
-    height: 30px;
-    font-size: 20px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    border-radius: 4px;
 }
-.loginBotton {
-    height: 45px;
-    width: 100%;
+
+button[type="submit"] {
+    background-color: #008CBA;
+    color: #fff;
     border: none;
-    outline: none;
-    background: rgb(112, 51, 216);
-    background-size: 200%;
-    color: rgb(60, 54, 165);
-    font-size: 16px;
+    padding: 8px 16px;
+    margin: 8px 0;
+    border-radius: 4px;
+    cursor: pointer;
 }
-.loginButton:hover {
-    background-position: right;
-    font-size: 17px;
+
+a {
+    color: #fff;
+    text-decoration: none;
 }
+
 .signUp {
-    color: white;
-    margin-top: 45px;
-    text-align: center;
-}
-.signUp a {
-    color: black;
+    font-size: 18px;
+    color: #0a8286;
 }
