@@ -1,14 +1,91 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Goose Run</title>
-        <script src="game.js"></script>
-        <link rel="stylesheet" href="game.css">
-    </head>
-    <body>
-        
-        <canvas id="myCanvas" style="border:1px solid #000000;"></canvas>
-        <script>startGame();</script>
+<!doctype html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8" />
+    <title>Phaser Grid Test</title>
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        canvas {
+            display: block;
+            margin: auto;
+        }
+    </style>
 
-    </body>
+
+
+
+    <!-- IMPORTS -->
+    <script src="phaser.js"></script>
+    <script src="game_grid.js"></script>
+    <script src="player.js"></script>
+</head>
+<body>
+
+
+
+
+    <!-- Game -->
+    <script>
+        var config = {
+            type: Phaser.AUTO,
+            scale: {
+                mode: Phaser.Scale.FIT,
+                parent: 'game-container',
+                width: Math.min(window.innerWidth, window.innerHeight),
+                height: Math.min(window.innerWidth, window.innerHeight)
+            },
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+
+        var game = new Phaser.Game(config);
+        var grid = null;
+        var player = null;
+
+
+        function preload ()
+        {
+        }
+
+        function create ()
+        {
+            ////////////////////
+            // game grid test //
+            ////////////////////
+            grid = new GameGrid(scene=this, x=0, y=0, width=config.scale.width, height=config.scale.height, rows=10, columns=10);
+            // // const cell = grid.getCell(row=2, column=3);
+            grid.setColor(row=2, column=3, color=0xff0000); // red 
+            grid.setColor(row=0, column=0, color=0x131aeb); // blue
+            grid.setColor(row=7, column=7, color=0x32a852); // green
+
+
+
+
+            /////////////////
+            // player test //
+            /////////////////
+            player = new Player(scene=this, x=0, y=0, width=grid.cellWidth, height=grid.cellHeight, speed=2, color=0xff0000);
+
+        }
+
+
+        
+        function update ()
+        {
+            player.update();
+        }
+    </script>
+
+
+
+
+
+
+</body>
 </html>
