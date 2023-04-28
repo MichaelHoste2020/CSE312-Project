@@ -17,6 +17,9 @@ async def getUsers():
 async def start():
     return FileResponse("src/html/index.html")
 
+@app.get("/home")
+async def start():
+    return FileResponse("src/html/home.html")
 
 @app.get("/signup")
 async def start():
@@ -50,7 +53,7 @@ async def getuser(username: str = Form(...), password: str = Form(...)):
         # bad request here
         print("bad")
         # otherwise it sets the return_Info as a cookie of authorication which Will be checked
-    return RedirectResponse("", status.HTTP_204_NO_CONTENT)
+    return RedirectResponse("/home", status.HTTP_301_MOVED_PERMANENTLY)
 
 # Handles Signup
 
@@ -61,7 +64,7 @@ async def storeUser(username: str = Form(...), password: str = Form(...)):
 
     # This is to make sure that a new user does not have the same name
     if return_Type == True:
-        return RedirectResponse("", status.HTTP_204_NO_CONTENT)
+        return RedirectResponse("/", status.HTTP_301_MOVED_PERMANENTLY)
     return RedirectResponse("", status.HTTP_401_UNAUTHORIZED)
 
 @app.websocket("/ws")
