@@ -14,8 +14,17 @@ async def getUsers():
     return userdb.getUsers()
 
 @app.get("/")
-async def start():
-    return FileResponse("src/html/index.html")
+async def start(request: Request, response: Response):
+    # grabbing the value of "visits" cookie from response headers
+    visitsCookie = request.cookies.get("visits")
+    # response starts off as FileResponse and then add a cookie on top of that with set_cookie
+    response = FileResponse("src/html/index.html")
+    
+    if visitsCookie:
+        response.set_cookie(key="visits", value=int(visitsCookie)+1)
+    else:
+        response.set_cookie(key="visits", value=1)
+    return response
 
 @app.get("/home")
 async def start():
@@ -42,7 +51,6 @@ async def script():
     return FileResponse("src/js/main.js")
 
 # Handles user login
-
 
 @app.post("/login")
 async def getuser(username: str = Form(...), password: str = Form(...)):
