@@ -4,6 +4,8 @@ from database import db
 from fastapi import *
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import * #fastAPI is based off starlette
+from fastapi.templating import Jinja2Templates
+import bcrypt
 
 app = FastAPI()
 userdb = db()
@@ -28,7 +30,8 @@ async def start(request: Request, response: Response):
 
 @app.get("/home")
 async def start():
-    return FileResponse("src/html/home.html")
+    name = find_Current_User()
+    return Jinja2Templates.TemplateResponse("src/html/home.html",{"username": name})
 
 @app.get("/signup")
 async def start():
@@ -91,3 +94,19 @@ def auth_check(DataBase_Users, Incoming_Auth_Token):
         if user["auth"] == Incoming_Auth_Token:
             return True
     return False
+
+def find_Current_User(userdb,auth_Token):
+    for user in userdb:
+        check = bcrypt.hashpw(auth_Token,user["salt"])
+        if user["auth_Token"] == check:
+            return user["username"]
+        
+    return ""
+
+def list_User(user_db):
+
+    user_List = []
+
+    for user in user_db.find({}):
+        user_List.append({"username":user["username"],"Score":user["score"]})
+    return user_List

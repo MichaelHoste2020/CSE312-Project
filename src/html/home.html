@@ -7,6 +7,18 @@
     <title>Document</title>
 </head>
 <body>
-    <p>testing</p>
+    <h1>Welcome back {{ username }}</h1>
+
+    <button class="play-button">
+        <i class="fa fa-play"></i> Play
+    </button>
+
+    <h3>Here are some of your other users!!!</h3>
+
+    <ul>
+        {% for user, score in users.item() %}
+        <li>{{ user }} - Score: {{ score }}</li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
