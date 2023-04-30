@@ -71,7 +71,8 @@
             // player test //
             /////////////////
             players = [new Player(scene=this, x=0 * grid.cellHeight, y=0 * grid.cellHeight, width=grid.cellWidth, height=grid.cellHeight, speed=grid.cellHeight, color=0xff0000, "down"),new Player(scene=this, x=1 * grid.cellHeight, y=1 * grid.cellHeight, width=grid.cellWidth, height=grid.cellHeight, speed=grid.cellHeight, color=0xff0000, "down")];
-            console.log(players)
+            // players = [new Player(scene=this, x=0 * grid.cellHeight, y=0 * grid.cellHeight, width=grid.cellWidth, height=grid.cellHeight, speed=grid.cellHeight, color=0xff0000, "down")]
+            // console.log(players)
         }
 
         function isCollision(pos,collidables){
@@ -128,7 +129,7 @@
         {   
             if(counter == 0){
                 for (let i = 0; i < players.length; i++){
-                    console.log(players[i])
+                    // console.log(players[i])
                     players[i].update()
                     updateClaimed(players[i])
                 }
