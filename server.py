@@ -5,10 +5,14 @@ from fastapi import *
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import * #fastAPI is based off starlette
 from fastapi.templating import Jinja2Templates
+from Classes import *
 import bcrypt
 
 app = FastAPI()
 userdb = db()
+manager = ConnectionManager()
+clients = {}
+sockets = {}
 
 # IMPORTANT: DELETE THIS, ONLY FOR DEMOING
 @app.get("/users")
@@ -81,19 +85,31 @@ async def storeUser(username: str = Form(...), password: str = Form(...)):
 @app.websocket("/lobby")
 async def websocket_endpoint(websocket: WebSocket):
     try:
-        await websocket.accept()
+        await manager.connect(websocket)
+        id = str(websocket.client.host) + ":" + str(websocket.client.port)
         while True:
             data = await websocket.receive()
-            text = json.loads(data.get("text"))
-            print(text)
-            print(text.get("message"))
+            print(data)
+            type = data.get("type")
+            
+            if data.get("text"):
+                if json.loads(data.get("text")):
+                    textType = json.loads(data.get("text")).get("type")
+                    if textType == "new_user":
+                        message = json.dumps({"client": id, "x": 0, "y": 0, "infoType": "new_user"})
+                        await manager.sendDirectMessage(message, websocket)
+                    else:
+                        location = json.loads(data.get("text"))
+                        location["id"] = id
+                        location["infoType"] = "location"
+                        message = json.dumps(location)
+                        await manager.broadcast(message, websocket)
+            elif type == "websocket.disconnect":
+                raise WebSocketDisconnect
     except WebSocketDisconnect:
+        await manager.disconnect(id)
         print(f"{websocket.client} has disconnected")
     
-if __name__ == "__main__":
-    uvicorn.run(app, host='0.0.0.0', port=8000)
-
-
 def auth_check(DataBase_Users, Incoming_Auth_Token):
 
     for user in DataBase_Users:
@@ -116,3 +132,6 @@ def list_User(user_db):
     for user in user_db.find({}):
         user_List.append({"username":user["username"],"Score":user["score"]})
     return user_List
+
+if __name__ == "__main__":
+    uvicorn.run(app, host='0.0.0.0', port=8000)

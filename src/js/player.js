@@ -36,6 +36,11 @@ class Player extends Phaser.GameObjects.Sprite {
         }
     }
 
+    setGridCoords(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
     getGridCoords() {
         var grid_x = Math.round(this.x / this.width);
         var grid_y = Math.round(this.y / this.height);
