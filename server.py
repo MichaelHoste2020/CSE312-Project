@@ -37,24 +37,23 @@ async def start():
 async def start():
     return FileResponse("src/html/index.html")
 
-@app.get("/styles/main.css")
-async def start():
-    return FileResponse("src/styles/main.css")
+@app.get("/game")
+async def game():
+    return FileResponse("src/html/game.html")
 
-@app.get("/styles/signup.css")
-async def start():
-    return FileResponse("src/styles/signup.css")
+@app.get("/js/{filename}.js")
+async def script(filename: str):
+    return FileResponse(f"src/js/{filename}.js")
+
+@app.get("/styles/{filename}.css")
+async def start(filename: str):
+    return FileResponse(f"src/styles/{filename}.css")
 
 @app.get("/images/logo.svg")
 async def getLogo():
     return FileResponse("src/images/logo.svg")
 
-@app.get("/js/main.js")
-async def script():
-    return FileResponse("src/js/main.js")
-
 # Handles user login
-
 @app.post("/login")
 async def getuser(username: str = Form(...), password: str = Form(...)):
 
@@ -78,12 +77,19 @@ async def storeUser(username: str = Form(...), password: str = Form(...)):
         return RedirectResponse("/", status.HTTP_301_MOVED_PERMANENTLY)
     return RedirectResponse("", status.HTTP_401_UNAUTHORIZED)
 
-@app.websocket("/ws")
+# Websocket connection for lobby
+@app.websocket("/lobby")
 async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    while True:
-        data = await websocket.receive()
-
+    try:
+        await websocket.accept()
+        while True:
+            data = await websocket.receive()
+            text = json.loads(data.get("text"))
+            print(text)
+            print(text.get("message"))
+    except WebSocketDisconnect:
+        print(f"{websocket.client} has disconnected")
+    
 if __name__ == "__main__":
     uvicorn.run(app, host='0.0.0.0', port=8000)
 

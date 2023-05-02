@@ -1,34 +1,9 @@
-<!doctype html> 
-<html lang="en"> 
-<head> 
-    <meta charset="UTF-8" />
-    <title>Phaser Grid Test</title>
-    <style type="text/css">
-        body {
-            margin: 0;
-            padding: 0;
+var ws = new WebSocket("ws://localhost:8000/lobby");
+
+        ws.onopen = function(event){
+            ws.send(JSON.stringify({"message": "connected"}));
         }
-        canvas {
-            display: block;
-            margin: auto;
-        }
-    </style>
 
-
-
-
-    <!-- IMPORTS -->
-    <script src="phaser.js"></script>
-    <script src="game_grid.js"></script>
-    <script src="player.js"></script>
-</head>
-<body>
-
-
-
-
-    <!-- Game -->
-    <script>
         var config = {
             type: Phaser.AUTO,
             scale: {
@@ -139,6 +114,3 @@
                 counter = 0
             }
         }
-    </script>
-</body>
-</html>
