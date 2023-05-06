@@ -57,6 +57,10 @@ async def start(filename: str):
 async def getLogo():
     return FileResponse("src/images/logo.svg")
 
+@app.get("/images/goose.ico")
+async def getGoose():
+    return FileResponse("src/images/goose.ico")
+
 # Handles user login
 @app.post("/login")
 async def getuser(username: str = Form(...), password: str = Form(...)):
@@ -85,6 +89,10 @@ async def storeUser(username: str = Form(...), password: str = Form(...)):
 @app.websocket("/lobby")
 async def websocket_endpoint(websocket: WebSocket):
     try:
+        # TODO:
+        #   Create a lobby for every 2 connections
+        #   Store using a dictionary id -> [client1, client2]
+        #   Clients will be randomly assigned on a button press
         await manager.connect(websocket)
         id = str(websocket.client.host) + ":" + str(websocket.client.port)
         while True:

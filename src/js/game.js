@@ -7,8 +7,8 @@ var config = {
     scale: {
         mode: Phaser.Scale.FIT,
         parent: 'game-container',
-        width: Math.min(window.innerWidth, window.innerHeight),
-        height: Math.min(window.innerWidth, window.innerHeight)
+        width: 800,
+        height: 800
     },
     scene: {
         preload: preload,
@@ -20,6 +20,7 @@ var config = {
 var game = new Phaser.Game(config);
 var grid = null;
 var players = {};
+var currentPlayer;
 
 
 function preload ()
@@ -108,24 +109,35 @@ function update ()
     //     }
     // }
 
+    // Update the values of the players using data retrieved from server
     if(counter == 0){
-        //console.log(players)
         for (let [key,value] of Object.entries(players)){
-            // console.log(players[i])
             value.update();
             updateClaimed(value);
-            ws.send(JSON.stringify({"x": value.x, "y": value.y}))
         }
     }
     counter++
     if(counter >= 5){
         counter = 0;
     }
+
+    // Send only the clients data to server
+    if (players[currentPlayer]){
+        ws.send(JSON.stringify({"x": players[currentPlayer].x, "y": players[currentPlayer].y}))
+    }
 }
 
 ws.onmessage = function(wsMessage){
     const message = JSON.parse(wsMessage.data);
     console.log(message)
+
+    // When a new_user is detected, set the currentPlayer variable to reference its IP
+    if (message.infoType == "new_user"){
+        currentPlayer = message.client;
+    }
+
+    // If the player exists, update the coords
+    // Otherwise create a new player class
     if (players[message.client]){
         players[message.client].setGridCoords(message.x, message.y);
     }else{
