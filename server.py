@@ -91,10 +91,6 @@ lobbyID = 0
 @app.websocket("/lobby")
 async def websocket_endpoint(websocket: WebSocket):
     try:
-        # TODO:
-        #   Create a lobby for every 2 connections
-        #   Store using a dictionary id -> [client1, client2]
-        #   Clients will be randomly assigned on a button press
         global lobbies
         global lobbyID
         await manager.connect(websocket)
@@ -109,9 +105,6 @@ async def websocket_endpoint(websocket: WebSocket):
                 if json.loads(data.get("text")):
                     textType = json.loads(data.get("text")).get("type")
                     #print(textType)
-                    # TODO:
-                    #   On winner, stop everyone else from moving
-                    #   Create a system that waits for new players to join
                     
                     # when someone wins send a "winner" response to winner and "loser" response to everyone else
                     if textType == "winner":
@@ -119,6 +112,7 @@ async def websocket_endpoint(websocket: WebSocket):
                         winnerMsg = json.dumps({ "infoType": "winner"})
                         LoserMsg = json.dumps({ "infoType": "loser" })
                         await manager.sendDirectMessage(winnerMsg, websocket)
+                        #FIXME: change this so it only sends to the other client, broadcasting sends it to everyone
                         await manager.broadcast(LoserMsg, websocket)
 
                     if textType == "new_user":
@@ -141,7 +135,6 @@ async def websocket_endpoint(websocket: WebSocket):
                         print(id, clients[id])
                         print(lobbies, "lobbyID:", lobbyID)
                     else:
-                        # FIXME: Lobbies are somehow getting mixed up
                         # get location data
                         location = json.loads(data.get("text"))
                         location["client"] = id
@@ -173,14 +166,26 @@ async def websocket_endpoint(websocket: WebSocket):
     except WebSocketDisconnect:
         inLobby = clients.get(id).get("lobbyID")
         
+        lobby = lobbies.get(inLobby, [])
+        
+        # tell the other player their opponent left
+        if len(lobby) >= 2:
+            otherClient = None
+            if (lobby[0] != id):
+                otherClient = lobby[0]
+            else:
+                otherClient = lobby[1]
+            
+            if otherClient:
+                otherSocket = manager.getSocket(otherClient)
+                message = json.dumps({"infoType": "opponent_left"})
+                await manager.sendDirectMessage(message, otherSocket)
+            
         await manager.disconnect(id)
         clients.pop(id)
-        lobbies.get(inLobby).remove(id)
-        
         print(f"{websocket.client} has disconnected")
     
 def auth_check(DataBase_Users, Incoming_Auth_Token):
-
     for user in DataBase_Users:
         if user["auth"] == Incoming_Auth_Token:
             return True

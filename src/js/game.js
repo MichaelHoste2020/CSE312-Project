@@ -21,6 +21,7 @@ var game = new Phaser.Game(config);
 var grid = null;
 var players = {};
 var currentPlayer;
+var opponentConnected = true;
 
 
 function preload ()
@@ -124,7 +125,7 @@ function update ()
     
     if (currentPlayer){
         currentPlayer.update();
-        console.log(currentPlayer.winner);
+        // console.log(currentPlayer.winner);
         if (currentPlayer.winner){
             ws.send(JSON.stringify({ type: "winner" }))
         }else{
@@ -137,8 +138,12 @@ ws.onmessage = function(wsMessage){
     const message = JSON.parse(wsMessage.data);
     // console.log(message)
 
+    // TODO: handle winner and loser prompts
     // When a new_user is detected, set the currentPlayer variable to reference its IP
-    if (message.infoType == "winner"){
+    if (message.infoType == "opponent_left"){
+        console.log("left");
+        document.getElementById("opponentDisconnect").style.display = "unset";
+    }else if (message.infoType == "winner"){
         //console.log("You won!");
         ws.send(JSON.stringify({ type: "reset" }));
     }else if (message.infoType == "loser"){
