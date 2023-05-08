@@ -3,7 +3,7 @@ var gameScene = null;
 var clients = {};
 
 var config = {
-    type: Phaser.AUTO,
+    type: Phaser.CANVAS,
     scale: {
         mode: Phaser.Scale.FIT,
         parent: 'game-container',
@@ -113,7 +113,6 @@ function update ()
     if(counter == 0){
         for (let [key,value] of Object.entries(players)){
             value.update();
-            updateClaimed(value);
         }
     }
     counter++
@@ -122,25 +121,34 @@ function update ()
     }
 
     // Send only the clients data to server
-    if (players[currentPlayer]){
-        ws.send(JSON.stringify({"x": players[currentPlayer].x, "y": players[currentPlayer].y}))
+    
+    if (currentPlayer){
+        currentPlayer.update();
+        console.log(currentPlayer.winner);
+        if (currentPlayer.winner){
+            ws.send(JSON.stringify({ type: "winner" }))
+        }else{
+            ws.send(JSON.stringify({"x": currentPlayer.x, "y": currentPlayer.y}))
+        }
     }
 }
 
 ws.onmessage = function(wsMessage){
     const message = JSON.parse(wsMessage.data);
-    console.log(message)
+    // console.log(message)
 
     // When a new_user is detected, set the currentPlayer variable to reference its IP
-    if (message.infoType == "new_user"){
-        currentPlayer = message.client;
-    }
-
-    // If the player exists, update the coords
-    // Otherwise create a new player class
-    if (players[message.client]){
+    if (message.infoType == "winner"){
+        //console.log("You won!");
+        ws.send(JSON.stringify({ type: "reset" }));
+    }else if (message.infoType == "loser"){
+        //console.log("You lost!");
+        ws.send(JSON.stringify({ type: "reset" }));
+    }else if (message.infoType == "new_user"){
+        currentPlayer = new Player(scene=gameScene, x=message.x * grid.cellHeight, y=message.y * grid.cellHeight, width=grid.cellWidth, height=grid.cellHeight, speed=10, color=0xff0000, "down");
+    }else if (players[message.client]){
         players[message.client].setGridCoords(message.x, message.y);
     }else{
-        players[message.client] = new Player(scene=gameScene, x=message.x * grid.cellHeight, y=message.y * grid.cellHeight, width=grid.cellWidth, height=grid.cellHeight, speed=grid.cellHeight, color=0xff0000, "down");
+        players[message.client] = new OtherPlayer(scene=gameScene, x=message.x *grid.cellHeight, y=message.y*grid.cellHeight, width=grid.cellWidth, height=grid.cellHeight, color=0xff0000)
     }
 }

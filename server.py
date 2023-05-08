@@ -86,6 +86,8 @@ async def storeUser(username: str = Form(...), password: str = Form(...)):
     return RedirectResponse("", status.HTTP_401_UNAUTHORIZED)
 
 # Websocket connection for lobby
+lobbies = {}
+lobbyID = 0
 @app.websocket("/lobby")
 async def websocket_endpoint(websocket: WebSocket):
     try:
@@ -93,29 +95,88 @@ async def websocket_endpoint(websocket: WebSocket):
         #   Create a lobby for every 2 connections
         #   Store using a dictionary id -> [client1, client2]
         #   Clients will be randomly assigned on a button press
+        global lobbies
+        global lobbyID
         await manager.connect(websocket)
         id = str(websocket.client.host) + ":" + str(websocket.client.port)
         while True:
             data = await websocket.receive()
-            print(data)
+            #print(data)
+            #print(clients)
             type = data.get("type")
             
             if data.get("text"):
                 if json.loads(data.get("text")):
                     textType = json.loads(data.get("text")).get("type")
+                    #print(textType)
+                    # TODO:
+                    #   On winner, stop everyone else from moving
+                    #   Create a system that waits for new players to join
+                    
+                    # when someone wins send a "winner" response to winner and "loser" response to everyone else
+                    if textType == "winner":
+                        print("winner")
+                        winnerMsg = json.dumps({ "infoType": "winner"})
+                        LoserMsg = json.dumps({ "infoType": "loser" })
+                        await manager.sendDirectMessage(winnerMsg, websocket)
+                        await manager.broadcast(LoserMsg, websocket)
+
                     if textType == "new_user":
+                        # if the current lobby is maxed out, go to the next avaliable one
+                        print( len(lobbies.get(lobbyID, [])) )
+                        if len(lobbies.get(lobbyID, [])) >= 2: 
+                            print("making new lobby")
+                            lobbyID += 1
+                        
+                        # when new user detected add client to data structure
+                        clients[id] = {"lobbyID": lobbyID, "x": 0, "y": 0}
+                        # add client to existing lobby else create new one if previous was full/non-existant
+                        if lobbies.get(lobbyID):
+                            lobbies.get(lobbyID).append(id)
+                        else:
+                            lobbies[lobbyID] = [id]
+                        
                         message = json.dumps({"client": id, "x": 0, "y": 0, "infoType": "new_user"})
                         await manager.sendDirectMessage(message, websocket)
+                        print(id, clients[id])
+                        print(lobbies, "lobbyID:", lobbyID)
                     else:
+                        # FIXME: Lobbies are somehow getting mixed up
+                        # get location data
                         location = json.loads(data.get("text"))
-                        location["id"] = id
+                        location["client"] = id
                         location["infoType"] = "location"
-                        message = json.dumps(location)
-                        await manager.broadcast(message, websocket)
+                        
+                        # update location data on server side for client
+                        clients[id]["x"] = location.get("x")
+                        clients[id]["y"] = location.get("y")
+                        
+                        # get the other client in the same lobby if one exists
+                        otherClient = None
+                        currentLobbyID = clients.get(id).get("lobbyID", -1)
+                        if currentLobbyID != -1:
+                            if len(lobbies.get(currentLobbyID, [])) >= 2:
+                                if lobbies.get(currentLobbyID)[0] != id:
+                                    otherClient = lobbies.get(currentLobbyID)[0]
+                                else:
+                                    otherClient = lobbies.get(currentLobbyID)[1]
+                            
+                            # if there is another client in lobby, send the clients location data to them
+                            if otherClient:
+                                otherSocket = manager.getSocket(otherClient)
+
+                                message = json.dumps(location)
+                                #print("---------\nLobby:", lobbies.get(currentLobbyID), "\nClient:", id, "\nOther client:", otherClient, "\nMessage:", message,"\n--------")
+                                await manager.sendDirectMessage(message, otherSocket)
             elif type == "websocket.disconnect":
                 raise WebSocketDisconnect
     except WebSocketDisconnect:
+        inLobby = clients.get(id).get("lobbyID")
+        
         await manager.disconnect(id)
+        clients.pop(id)
+        lobbies.get(inLobby).remove(id)
+        
         print(f"{websocket.client} has disconnected")
     
 def auth_check(DataBase_Users, Incoming_Auth_Token):

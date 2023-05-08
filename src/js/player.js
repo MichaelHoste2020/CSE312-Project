@@ -29,11 +29,9 @@ class Player extends Phaser.GameObjects.Sprite {
         this.claimed_tiles = [grid_x, grid_y];
         this.path_tiles = [grid_x, grid_y];
         this.controls = {
-            up: scene.input.keyboard.addKey('W'),
-            left: scene.input.keyboard.addKey('A'),
             down: scene.input.keyboard.addKey('S'),
-            right: scene.input.keyboard.addKey('D')
         }
+        this.winner = false;
     }
 
     setGridCoords(x, y) {
@@ -42,8 +40,8 @@ class Player extends Phaser.GameObjects.Sprite {
     }
 
     getGridCoords() {
-        var grid_x = Math.round(this.x / this.width);
-        var grid_y = Math.round(this.y / this.height);
+        var grid_x = this.x / this.width;
+        var grid_y = this.y / this.height;
         return {
             grid_x: grid_x,
             grid_y: grid_y
@@ -51,39 +49,21 @@ class Player extends Phaser.GameObjects.Sprite {
     }
 
     update() {
-        // Control the player
-        if (this.controls.up?.isDown) {
-            this.direction = "up"
-        }
-        if (this.controls.left?.isDown) {
-            this.direction = "left"
-        }
-        if (this.controls.down?.isDown) {
-            this.direction = "down"
-        }
-        if (this.controls.right?.isDown) {
-            this.direction = "right"
-        }
-
         // Move the player
         const {grid_x, grid_y} = this.getGridCoords();
         const max_rows = 20;
         const max_cols = 20;
 
-        if (grid_x > 0 && this.direction == "left") {
-            this.x -= this.speed;       
-        }
-        else if (grid_x < (max_cols - 1) && this.direction == "right") {
-            this.x += this.speed;
-        }
-        if (grid_y > 0 && this.direction == "up") {
-            this.y -= this.speed;
-        }
-        if (grid_y < (max_rows - 1) && this.direction == "down") {
-            this.y += this.speed;
+        if (this.y < 760 && this.controls.down?.isDown) {
+            this.y += 10;
         }
 
-        this.path_tiles.push([grid_x, grid_y])
+        if (this.y >= 760){
+            this.winner = true;
+        }
+
+        //this.path_tiles.push([grid_x, grid_y])
+        //console.log(this.path_tiles)
     }
 
 }

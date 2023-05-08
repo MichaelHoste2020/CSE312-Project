@@ -4,6 +4,9 @@ class ConnectionManager:
     def __init__(self):
         self.sockets: dict[str, WebSocket] = {}
     
+    def getSocket(self, id: str):
+        return self.sockets.get(id)
+    
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
         id = str(websocket.client.host) + ":" + str(websocket.client.port)
