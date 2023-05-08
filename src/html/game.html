@@ -32,8 +32,15 @@
     <!-- Game -->
     <script src="/js/game.js"></script>
     <p>Hello {{ name }}</p>
-    <button onclick="logout();">Log out</button>
-    <button onclick="account();">Account</button>
+
+    <form action="/logout" method="post">
+        <button type="submit">Log out</button>
+    </form>
+
+    <form action="/home" method="get">
+        <button type="submit">Account</button>
+    </form>
+
     <div id="opponentDisconnect">
         <p>Your opponent left</p>
     </div>

@@ -3,10 +3,11 @@ import json
 from database import db
 from fastapi import *
 from fastapi.staticfiles import StaticFiles
-from starlette.responses import * #fastAPI is based off starlette
+from starlette.responses import *  # fastAPI is based off starlette
 from fastapi.templating import Jinja2Templates
 from Classes import *
 import bcrypt
+from functions import *
 
 app = FastAPI()
 userdb = db()
@@ -16,36 +17,70 @@ sockets = {}
 templates = Jinja2Templates(directory="src/html")
 
 # IMPORTANT: DELETE THIS, ONLY FOR DEMOING
+
+templates = Jinja2Templates(directory="src/html")
+
+
 @app.get("/users")
 async def getUsers():
     return userdb.getUsers()
 
+
+@app.post("/logout")
+async def getUsers(request: Request, response: Response):
+    response.delete_cookie(key="auth")
+    return RedirectResponse("/", status.HTTP_301_MOVED_PERMANENTLY)
+
+
 @app.get("/")
-async def start(request: Request, response: Response):
+async def login_signup(request: Request, response: Response):
     # grabbing the value of "visits" cookie from response headers
     visitsCookie = request.cookies.get("visits")
     # response starts off as FileResponse and then add a cookie on top of that with set_cookie
     response = FileResponse("src/html/index.html")
-    
+
     if visitsCookie:
         response.set_cookie(key="visits", value=int(visitsCookie)+1)
     else:
         response.set_cookie(key="visits", value=1)
     return response
 
-@app.get("/home")
-async def start():
-    name = find_Current_User()
-    return Jinja2Templates.TemplateResponse("src/html/home.html",{"username": name})
 
-@app.get("/signup")
+@app.get("/home")
+async def homePage(request: Request):
+
+    auth = request.cookies.get("auth_token")
+    print("This is the current auth token {0}".format(auth))
+
+    # If we are not authenticated return to main page
+    if auth == None:
+        return RedirectResponse("/", status.HTTP_301_MOVED_PERMANENTLY)
+    elif (userdb.Auth_Cookie_Check(auth) == False):
+        return RedirectResponse("/", status.HTTP_301_MOVED_PERMANENTLY)
+
+    name = userdb.Current_User(auth)
+
+    users = []
+
+    for user in userdb.userCollection.find({}):
+        users.append({"username": user["username"], "score": user["score"]})
+
+    return templates.TemplateResponse("home.html", {"request": request, "username": name, "users": users})
+
+
+@app.get("/styles/home.css")
 async def start():
-    return FileResponse("src/html/index.html")
+    print("getting new css")
+    return FileResponse("src/styles/home.css")
 
 @app.get("/game")
 async def game(request: Request, response_class=HTMLResponse):
-    name = request.query_params.get("name")
-    return templates.TemplateResponse("game.html", {"request": request, "name": name})
+    name = request.cookies.get("name")
+    
+    if name:
+        return templates.TemplateResponse("game.html", {"request": request, "name": name})
+    
+    return PlainTextResponse("No user logged in", status_code=404)
 
 @app.get("/js/{filename}.js")
 async def script(filename: str):
@@ -54,6 +89,7 @@ async def script(filename: str):
 @app.get("/styles/{filename}.css")
 async def start(filename: str):
     return FileResponse(f"src/styles/{filename}.css")
+
 
 @app.get("/images/logo.svg")
 async def getLogo():
@@ -64,16 +100,22 @@ async def getGoose():
     return FileResponse("src/images/goose.ico")
 
 # Handles user login
+
 @app.post("/login")
 async def getuser(username: str = Form(...), password: str = Form(...)):
 
+    # Check and see if they are already logged in
     return_Info = userdb.auth_User(username, password)
 
+    # bad request here
     if return_Info == "":
-        # bad request here
         print("bad")
         # otherwise it sets the return_Info as a cookie of authorication which Will be checked
-    return RedirectResponse("/game", status.HTTP_301_MOVED_PERMANENTLY)
+        return RedirectResponse("/", status.HTTP_301_MOVED_PERMANENTLY)
+    response = RedirectResponse("/game", status.HTTP_301_MOVED_PERMANENTLY)
+    response.set_cookie(key="name", value=username)
+    response.set_cookie(key="auth_token", value=return_Info)
+    return response
 
 # Handles Signup
 
@@ -81,11 +123,25 @@ async def getuser(username: str = Form(...), password: str = Form(...)):
 @app.post("/signup")
 async def storeUser(username: str = Form(...), password: str = Form(...)):
     return_Type = userdb.storeUser(username, password)
+    
+    # This is to make sure that a new user does not have the same name
+    if return_Type == True:
+       return RedirectResponse("/", status.HTTP_301_MOVED_PERMANENTLY)
+    return RedirectResponse("/", status.HTTP_401_UNAUTHORIZED)
+
+
+@app.post("/change-account")
+async def change_Account_Info(request: Request,username: str = Form(...), password: str = Form(...)):
+    
+    cookie = request.cookies.get("auth_token")
+    
+    return_Type = userdb.Change_User_Info(username, password,cookie)
 
     # This is to make sure that a new user does not have the same name
     if return_Type == True:
-        return RedirectResponse(f"/game?name={username}", status.HTTP_301_MOVED_PERMANENTLY)
-    return RedirectResponse("", status.HTTP_401_UNAUTHORIZED)
+        return RedirectResponse("/home", status.HTTP_301_MOVED_PERMANENTLY)
+    return RedirectResponse("/", status.HTTP_401_UNAUTHORIZED)
+
 
 # Websocket connection for lobby
 lobbies = {}
@@ -185,6 +241,7 @@ async def websocket_endpoint(websocket: WebSocket):
             
         await manager.disconnect(id)
         clients.pop(id)
+        lobbyID+=1
         print(f"{websocket.client} has disconnected")
     
 def auth_check(DataBase_Users, Incoming_Auth_Token):
