@@ -12,6 +12,7 @@ RUN pip install pymongo
 RUN pip install pydantic
 RUN pip install python-multipart
 RUN pip install bcrypt
+RUN pip install jinja2
 
 EXPOSE 8000
 

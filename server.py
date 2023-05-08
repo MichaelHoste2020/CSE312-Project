@@ -13,6 +13,7 @@ userdb = db()
 manager = ConnectionManager()
 clients = {}
 sockets = {}
+templates = Jinja2Templates(directory="src/html")
 
 # IMPORTANT: DELETE THIS, ONLY FOR DEMOING
 @app.get("/users")
@@ -42,8 +43,9 @@ async def start():
     return FileResponse("src/html/index.html")
 
 @app.get("/game")
-async def game():
-    return FileResponse("src/html/game.html")
+async def game(request: Request, response_class=HTMLResponse):
+    name = request.query_params.get("name")
+    return templates.TemplateResponse("game.html", {"request": request, "name": name})
 
 @app.get("/js/{filename}.js")
 async def script(filename: str):
@@ -71,7 +73,7 @@ async def getuser(username: str = Form(...), password: str = Form(...)):
         # bad request here
         print("bad")
         # otherwise it sets the return_Info as a cookie of authorication which Will be checked
-    return RedirectResponse("/home", status.HTTP_301_MOVED_PERMANENTLY)
+    return RedirectResponse("/game", status.HTTP_301_MOVED_PERMANENTLY)
 
 # Handles Signup
 
@@ -82,7 +84,7 @@ async def storeUser(username: str = Form(...), password: str = Form(...)):
 
     # This is to make sure that a new user does not have the same name
     if return_Type == True:
-        return RedirectResponse("/", status.HTTP_301_MOVED_PERMANENTLY)
+        return RedirectResponse(f"/game?name={username}", status.HTTP_301_MOVED_PERMANENTLY)
     return RedirectResponse("", status.HTTP_401_UNAUTHORIZED)
 
 # Websocket connection for lobby
