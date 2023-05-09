@@ -1,8 +1,48 @@
-#opponentDisconnect{
+body {
+    background: #181a1b;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#container{
+    width: 120px;
+    height: 80px;
+    padding: 10px;
+    background-color: #3c58a9;
+    color: white;
+}
+
+#welcome{
+    position: absolute;
+}
+
+#opponentDisconnect, #noOpponent, #resultBox{
     display: none;
-    width: 500px;
-    height: 100px;
+    position: absolute;
+    max-width: 500px;
+    max-height: 100px;
     top: 50%;
     left: 50%;
-    margin: -50px 0 0 50px;
+    margin: -50px 0 0 -50px;
+    background-color: rgb(255, 187, 0);
+    padding: 20px;
+}
+
+#noOpponent{
+    display: unset;
+}
+
+#resultBox{
+    left: 45%;
+}
+
+form{
+    position: absolute;
+}
+
+#logOut{
+    margin-top:40px;
+}
+
+#account{
+    margin-top:60px;
 }

@@ -28,7 +28,9 @@ async def getUsers():
 
 @app.post("/logout")
 async def getUsers(request: Request, response: Response):
-    response.delete_cookie(key="auth")
+    response = templates.TemplateResponse("index.html", {"request": request})
+    response.delete_cookie(key="auth_token")
+    response.delete_cookie(key="name")
     return RedirectResponse("/", status.HTTP_301_MOVED_PERMANENTLY)
 
 
@@ -146,7 +148,7 @@ async def change_Account_Info(request: Request,username: str = Form(...), passwo
 # Websocket connection for lobby
 lobbies = {}
 lobbyID = 0
-@app.websocket("/lobby")
+@app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     try:
         global lobbies
@@ -158,26 +160,46 @@ async def websocket_endpoint(websocket: WebSocket):
             #print(data)
             #print(clients)
             type = data.get("type")
-            
+                    
             if data.get("text"):
                 if json.loads(data.get("text")):
                     textType = json.loads(data.get("text")).get("type")
                     #print(textType)
                     
                     # when someone wins send a "winner" response to winner and "loser" response to everyone else
-                    if textType == "winner":
-                        print("winner")
-                        winnerMsg = json.dumps({ "infoType": "winner"})
-                        LoserMsg = json.dumps({ "infoType": "loser" })
-                        await manager.sendDirectMessage(winnerMsg, websocket)
-                        #FIXME: change this so it only sends to the other client, broadcasting sends it to everyone
-                        await manager.broadcast(LoserMsg, websocket)
+                    if textType == "check_opponent":
+                        currentLobbyID = clients.get(id).get("lobbyID", -1)
+                        lobby = lobbies.get(currentLobbyID)
+                        if len(lobby) == 2:
+                            allowMessage = json.dumps({"event": "ping", "infoType": "allow_move"})
+                            await manager.sendDirectMessage(allowMessage, websocket)
+                    elif textType == "winner":
+                        otherClient = None
+                        client = clients.get(id)
+                        clientLobbyID = client.get("lobbyID")
+                        lobby = lobbies.get(clientLobbyID)
+                        
+                        
+                        if id != lobby[0]:
+                            otherClient = lobby[0]
+                        else:
+                            otherClient = lobby[1]
 
-                    if textType == "new_user":
+                        otherSocket = manager.getSocket(otherClient)
+                        winnerMsg = json.dumps({"event": "ping", "infoType": "winner"})
+                        LoserMsg = json.dumps({"event": "ping", "infoType": "loser" })
+                        await manager.sendDirectMessage(winnerMsg, websocket)
+                        await manager.sendDirectMessage(LoserMsg, otherSocket)
+                    elif textType == "new_user":
                         # if the current lobby is maxed out, go to the next avaliable one
                         print( len(lobbies.get(lobbyID, [])) )
                         if len(lobbies.get(lobbyID, [])) >= 2: 
                             print("making new lobby")
+                            lobbyID += 1
+                        elif lobbies.get(lobbyID) and lobbies.get(lobbyID)[0] not in manager.sockets.keys():
+                            print(lobbies)
+                            print(lobbies.get(lobbyID)[0])
+                            print(manager.sockets.keys())
                             lobbyID += 1
                         
                         # when new user detected add client to data structure
@@ -188,7 +210,7 @@ async def websocket_endpoint(websocket: WebSocket):
                         else:
                             lobbies[lobbyID] = [id]
                         
-                        message = json.dumps({"client": id, "x": 0, "y": 0, "infoType": "new_user"})
+                        message = json.dumps({"event": "ping", "client": id, "x": 0, "y": 0, "infoType": "new_user"})
                         await manager.sendDirectMessage(message, websocket)
                         print(id, clients[id])
                         print(lobbies, "lobbyID:", lobbyID)
@@ -197,6 +219,7 @@ async def websocket_endpoint(websocket: WebSocket):
                         location = json.loads(data.get("text"))
                         location["client"] = id
                         location["infoType"] = "location"
+                        location["event"] = "ping"
                         
                         # update location data on server side for client
                         clients[id]["x"] = location.get("x")
@@ -219,8 +242,6 @@ async def websocket_endpoint(websocket: WebSocket):
                                 message = json.dumps(location)
                                 #print("---------\nLobby:", lobbies.get(currentLobbyID), "\nClient:", id, "\nOther client:", otherClient, "\nMessage:", message,"\n--------")
                                 await manager.sendDirectMessage(message, otherSocket)
-            elif type == "websocket.disconnect":
-                raise WebSocketDisconnect
     except WebSocketDisconnect:
         inLobby = clients.get(id).get("lobbyID")
         
@@ -241,7 +262,6 @@ async def websocket_endpoint(websocket: WebSocket):
             
         await manager.disconnect(id)
         clients.pop(id)
-        lobbyID+=1
         print(f"{websocket.client} has disconnected")
     
 def auth_check(DataBase_Users, Incoming_Auth_Token):

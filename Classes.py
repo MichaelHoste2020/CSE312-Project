@@ -19,7 +19,8 @@ class ConnectionManager:
 
     # send message to a single websocket
     async def sendDirectMessage(self, message, websocket: WebSocket):
-        await websocket.send_text(message)
+        if websocket in self.sockets.values():
+            await websocket.send_text(message)
 
     # sends a message to every socket except current
     async def broadcast(self, message, current: WebSocket):

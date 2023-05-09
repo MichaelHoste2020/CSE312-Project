@@ -32,6 +32,7 @@ class Player extends Phaser.GameObjects.Sprite {
             down: scene.input.keyboard.addKey('S'),
         }
         this.winner = false;
+        this.allowMove = false;
     }
 
     setGridCoords(x, y) {
@@ -53,9 +54,14 @@ class Player extends Phaser.GameObjects.Sprite {
         const {grid_x, grid_y} = this.getGridCoords();
         const max_rows = 20;
         const max_cols = 20;
-
-        if (this.y < 760 && this.controls.down?.isDown) {
+        
+        if (this.allowMove && this.y < 760 && this.spamCheck && this.controls.down?.isDown) {
             this.y += 10;
+            this.spamCheck = false;
+        }
+
+        if (this.controls.down?.isUp){
+            this.spamCheck = true;
         }
 
         if (this.y >= 760){

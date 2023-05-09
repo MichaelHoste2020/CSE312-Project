@@ -1,5 +1,5 @@
 body {
-    background-color: #222;
+    background-color: #181a1b;
     text-align: center;
     color: #ddd;
     font-family: Arial, sans-serif;
@@ -19,7 +19,7 @@ body {
 }
 
 .play-button {
-    background-color: #666;
+    background-color: #cb893c;
     border: none;
     color: #fff;
     cursor: pointer;
@@ -33,11 +33,11 @@ body {
 }
 
 .play-button:hover {
-    background-color: #999;
+    background-color: #f0a146;
 }
 
 .change-account {
-    background-color: #666;
+    background-color: #cb893c;
     border: none;
     color: white;
     padding: 10px 20px;
@@ -50,11 +50,11 @@ body {
   }
 
 .change-account:hover {
-    background-color: #999;
+    background-color: #f0a146;
 }
 
 .dark-form {
-    background-color: #292929;
+    background-color: #3c58a9;
     color: white;
     padding: 20px;
     border-radius: 10px;
@@ -83,7 +83,7 @@ body {
   }
   
   .change[type="submit"] {
-    background-color: #e50914;
+    background-color: #cb893c;
     color: white;
     border: none;
     border-radius: 5px;
@@ -92,5 +92,5 @@ body {
   }
   
   .change:hover {
-    background-color: #ff141f;
+    background-color: #f0a146;
   }

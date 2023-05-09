@@ -31,18 +31,30 @@
 
     <!-- Game -->
     <script src="/js/game.js"></script>
-    <p>Hello {{ name }}</p>
+    
+    <div id="container">
+        <p id="welcome">Hello {{ name }}</p>
+        
+        <form action="/logout" method="post" id="logOut">
+            <button type="submit">Log out</button>
+        </form>
 
-    <form action="/logout" method="post">
-        <button type="submit">Log out</button>
-    </form>
+        <form action="/home" method="get" id="account">
+            <button type="submit">Account</button>
+        </form>
 
-    <form action="/home" method="get">
-        <button type="submit">Account</button>
-    </form>
+        <div id="opponentDisconnect">
+            <p>Your opponent left</p>
+        </div>
 
-    <div id="opponentDisconnect">
-        <p>Your opponent left</p>
-    </div>
+        <div id="noOpponent">
+            <p>Waiting for an opponent</p>
+        </div>
+
+        <div id="resultBox">
+            <p id="result"></p>
+            <p>To find a new game, refresh the page</p>
+        </div>
+    </div>  
 </body>
 </html>
