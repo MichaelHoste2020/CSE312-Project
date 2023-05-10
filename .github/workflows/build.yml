@@ -20,3 +20,10 @@ jobs:
     - 
       name: Build the Docker image
       run: docker-compose up -d --build
+    
+  deploy:
+
+
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source

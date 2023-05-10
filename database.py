@@ -6,9 +6,9 @@ import json
 
 class db():
 
-    # mongo_Client = MongoClient(
-    #     "mongodb+srv://mike:NqCsSQC8E8Arjcwd@cluster0.pkpo8iw.mongodb.net/?retryWrites=true&w=majority")
-    mongo_Client = MongoClient("mongo")
+    mongo_Client = MongoClient(
+        "mongodb+srv://mike:NqCsSQC8E8Arjcwd@cluster0.pkpo8iw.mongodb.net/?retryWrites=true&w=majority")
+    # mongo_Client = MongoClient("mongo")
     db = mongo_Client["database"]
     userCollection = db["users"]
 
