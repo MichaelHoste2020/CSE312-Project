@@ -1,0 +1,96 @@
+body {
+    background-color: #181a1b;
+    text-align: center;
+    color: #ddd;
+    font-family: Arial, sans-serif;
+}
+
+.main{
+    text-align: center;
+}
+
+.users {
+    text-align: center;
+}
+
+.header {
+    color: #fff;
+    text-align: center;
+}
+
+.play-button {
+    background-color: #cb893c;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    font-size: 1.5rem;
+    margin: 0 auto;
+    padding: 1rem;
+    transition: background-color 0.3s ease;
+    width: 50rem;
+    border-radius: 20px;
+}
+
+.play-button:hover {
+    background-color: #f0a146;
+}
+
+.change-account {
+    background-color: #cb893c;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+
+.change-account:hover {
+    background-color: #f0a146;
+}
+
+.dark-form {
+    background-color: #3c58a9;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 400px;
+    margin: auto;
+  }
+  
+  .dark-form label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .dark-form input[type="text"],
+  .dark-form input[type="password"] {
+    background-color: #1c1c1c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .dark-form input[type="text"]:focus,
+  .dark-form input[type="password"]:focus {
+    outline: none;
+  }
+  
+  .change[type="submit"] {
+    background-color: #cb893c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .change:hover {
+    background-color: #f0a146;
+  }

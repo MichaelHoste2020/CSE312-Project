@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/home.css">
+    <title>Goosegame-home</title>
+</head>
+<body>
+    <h1 class="header">Welcome back {{ username }}!!!</h1>
+  
+
+    <h3>Change Account Information</h3>
+    <form action="/change-account" method="POST" class="dark-form">
+        <div>
+          <label for="username">New Username:</label>
+          <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+          <label for="password">New Password:</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <div>
+          <button class="change" type="submit">Change Account</button>
+        </div>
+      </form>
+
+      <p></p>
+
+    <form action="/logout" method="post">
+        <button class="change" type="submit">Logout</button>
+    </form>
+
+      <p></p>
+
+    <form action="/game" method="get">
+      <button class="play-button">
+        <i class="fa fa-play"></i> Play
+      </button>
+    </form>
+    
+    <div class="main">
+        <h3>Here are some of your other users!!!</h3>
+
+        <ul class="users">
+            {% for user in users %}
+            <li class="main">{{ user.username }} - Score: {{ user.score }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8" />
+    <title>Phaser Grid Test</title>
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        canvas {
+            display: block;
+            margin: auto;
+        }
+    </style>
+    <link rel="stylesheet" href="../styles/game.css">
+
+
+
+
+    <!-- IMPORTS -->
+    <script src="/js/phaser.js"></script>
+    <script src="/js/game_grid.js"></script>
+    <script src="/js/player.js"></script>
+    <script src="/js/otherPlayer.js"></script>
+</head>
+<body>
+
+
+
+
+    <!-- Game -->
+    <script src="/js/game.js"></script>
+    
+    <div id="container">
+        <p id="welcome">Hello {{ name }}</p>
+        
+        <form action="/logout" method="post" id="logOut">
+            <button type="submit">Log out</button>
+        </form>
+
+        <form action="/home" method="get" id="account">
+            <button type="submit">Account</button>
+        </form>
+
+        <div id="opponentDisconnect">
+            <p>Your opponent left</p>
+        </div>
+
+        <div id="noOpponent">
+            <p>Waiting for an opponent</p>
+        </div>
+
+        <div id="resultBox">
+            <p id="result"></p>
+            <p>To find a new game, refresh the page</p>
+        </div>
+    </div>  
+</body>
+</html>
