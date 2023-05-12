@@ -52,10 +52,8 @@ function create ()
             ws.send(JSON.stringify({ type: "new_user" }));
         }
     }else{
-        ws.onopen = function (event) {
-            console.log("sending chrome");
-            ws.send(JSON.stringify({ type: "new_user" }));
-        }
+        console.log("sending chrome");
+        ws.send(JSON.stringify({ type: "new_user" }));
     }
     // players = [new Player(scene=this, x=0 * grid.cellHeight, y=0 * grid.cellHeight, width=grid.cellWidth, height=grid.cellHeight, speed=grid.cellHeight, color=0xff0000, "down")]
     // console.log(players)
