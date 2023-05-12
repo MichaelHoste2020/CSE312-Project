@@ -59,7 +59,7 @@ body {
 }
 
 #username, #password{
-    margin: -7px;
+    margin-top: 10px;
     width: 90%;
     height: 30px;
     padding: 5px;
@@ -110,8 +110,6 @@ body {
     margin-top: 60px;
     background-color: #3c58a9;
     width: 315px;
-    min-height: 425px;
-    max-height: 500px;
     border-radius: 5px;
 }
 
