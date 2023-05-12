@@ -287,4 +287,4 @@ def list_User(user_db):
     return user_List
 
 if __name__ == "__main__":
-    uvicorn.run(app, host='0.0.0.0', port=8080, ssl_certfile="nginx/cert.pem", ssl_keyfile="nginx/private.key")
+    uvicorn.run(app, host='0.0.0.0', port=8080)

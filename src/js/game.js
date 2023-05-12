@@ -1,4 +1,4 @@
-var ws = new WebSocket('wss://' + window.location.host + '/ws');
+var ws = new WebSocket('ws://' + window.location.host + '/ws');
 var gameScene = null;
 var clients = {};
 
