@@ -31,7 +31,7 @@ async def getUsers(request: Request, response: Response):
     response = templates.TemplateResponse("index.html", {"request": request})
     response.delete_cookie(key="auth_token")
     response.delete_cookie(key="name")
-    return RedirectResponse("/", status.HTTP_301_MOVED_PERMANENTLY)
+    return response
 
 
 @app.get("/")
